@@ -5,15 +5,6 @@ import time
 if sys.version_info >= (3, 0):
     from functools import reduce
 
-# Characteristic UUIDs
-BATTERY_VOLTAGE_CHARACTERISTIC    = "00002a19-0000-1000-8000-00805f9b34fb"
-DEVICE_INFORMATION_CHARACTERISTIC = "00002a29-0000-1000-8000-00805f9b34fb"
-LED_MATRIX_CHARACTERISTIC         = "f29b1523-cb19-40f3-be5c-7241ecb82fd1"
-FLY_CHARACTERISTIC                = "f29b1526-cb19-40f3-be5c-7241ecb82fd2"
-SWIPE_CHARACTERISTIC              = "f29b1527-cb19-40f3-be5c-7241ecb82fd2"
-ROTATION_CHARACTERISTIC           = "f29b1528-cb19-40f3-be5c-7241ecb82fd2"
-BUTTON_CLICK_CHARACTERISTIC       = "f29b1529-cb19-40f3-be5c-7241ecb82fd2"
-
 # Characteristic value handles
 BATTERY_VALUE_HANDLE   = 11
 FLY_VALUE_HANDLE       = 32
