@@ -80,7 +80,7 @@ class Nuimo:
     def displayLedMatrix(self, matrix, timeout, brightness = 1.0):
         matrix = '{:<81}'.format(matrix[:81])
         bytes = list(map(lambda leds: reduce(lambda acc, led: acc + (1 << led if leds[led] not in [' ', '0'] else 0), range(0, len(leds)), 0), [matrix[i:i+8] for i in range(0, len(matrix), 8)]))
-        self.peripheral.writeCharacteristic(LEDMATRIX_VALUE_HANDLE, struct.pack("BBBBBBBBBBBBB", bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], max(0, min(255, 255 * brightness)), max(0, min(255, timeout * 10.0))))
+        self.peripheral.writeCharacteristic(LEDMATRIX_VALUE_HANDLE, struct.pack("BBBBBBBBBBBBB", bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], max(0, min(255, int(255.0 * brightness))), max(0, min(255, int(timeout * 10.0)))))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -126,3 +126,5 @@ if __name__ == "__main__":
             nuimo.waitForNotifications()
     except BTLEException as e:
         print "Connection error:", e
+    except KeyboardInterrupt:
+        print "Program aborted"
