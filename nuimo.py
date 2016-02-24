@@ -1,6 +1,9 @@
 from bluepy.btle import DefaultDelegate, Peripheral, BTLEException
 import struct
 import sys
+import time
+if sys.version_info >= (3, 0):
+    from functools import reduce
 
 # Characteristic UUIDs
 BATTERY_VOLTAGE_CHARACTERISTIC    = "00002a19-0000-1000-8000-00805f9b34fb"
@@ -74,9 +77,10 @@ class Nuimo:
     def waitForNotifications(self):
         self.peripheral.waitForNotifications(1.0)
 
-    def displayLedMatrix(self, matrix, brightness, timeout):
-        
-        self.peripheral.writeCharacteristic(LEDMATRIX_VALUE_HANDLE, struct.pack("BBBBBBBBBBBBB", 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff))
+    def displayLedMatrix(self, matrix, timeout, brightness = 1.0):
+        matrix = '{:<81}'.format(matrix[:81])
+        bytes = list(map(lambda leds: reduce(lambda acc, led: acc + (1 << led if leds[led] not in [' ', '0'] else 0), range(0, len(leds)), 0), [matrix[i:i+8] for i in range(0, len(matrix), 8)]))
+        self.peripheral.writeCharacteristic(LEDMATRIX_VALUE_HANDLE, struct.pack("BBBBBBBBBBBBB", bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], max(0, min(255, 255 * brightness)), max(0, min(255, timeout * 10.0))))
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -94,8 +98,29 @@ if __name__ == "__main__":
         sys.exit()
     print "Connected. Waiting for input events..."
 
-    # Display all LEDs on and wait for notifications
-    nuimo.displayLedMatrix("*********", 1.0, 10.0)
+    # Display some LEDs matrices and wait for notifications
+    nuimo.displayLedMatrix(
+        "         " +
+        " ***     " +
+        " *  * *  " +
+        " *  *    " +
+        " ***  *  " +
+        " *    *  " +
+        " *    *  " +
+        " *    *  " +
+        "         ", 2.0)
+    time.sleep(2)
+    nuimo.displayLedMatrix(
+        " **   ** " +
+        " * * * * " +
+        "  *****  " +
+        "  *   *  " +
+        " * * * * " +
+        " *  *  * " +
+        " * * * * " +
+        "  *   *  " +
+        "   ***   ", 20.0)
+
     try:
         while True:
             nuimo.waitForNotifications()
