@@ -51,6 +51,13 @@ From your home folder do:
 2. `python nuimo.py FA:48:12:00:CA:AC` (Replace the MAC address with the address from step 1)
 3. Perform input events on your Nuimo, they will show up on your console
 
+# Troubleshooting
+
+If `sudo hcitool lescan` prints `Set scan parameters failed: Input/output error.`, try running the following commands:
+
+    sudo hciconfig hci0 down
+    sudo hciconfig hci0 up
+
 # Support
 
 If you have questions or comments, please visit https://senic.com or shoot us an email to developers@senic.com.
