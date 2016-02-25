@@ -16,8 +16,12 @@ The [bluez library](http://www.bluez.org/) will be used to enable your Bluetooth
 1. `sudo hcitool lescan | grep Nuimo` (Copy your Nuimo's MAC address and press Ctrl+C to stop discovery)
 2. `sudo gatttool -b FA:48:12:00:CA:AC -t random -I` (Replace the MAC address with the address from step 1)
 3. `connect` (Should successfully connect to Nuimo)
-4. `char-write-req 1e 0100` (Registers for button click events – press Nuimo's button to test)
-5. `exit` to leave `gatttool`
+4. `characteristics` (Displays [Nuimo's GATT characteristics](https://senic.com/files/nuimo-gatt-profile.pdf))
+5. Look for uuid `F29B1529-...` (button press characteristic) and note its `char value handle` (2nd column). Here: `001d`.
+6. Add `1` to the handle. Here: `001d + 1 = 001e` (Hexadecimal value representation; [use a calculator if necessary](http://www.miniwebtool.com/hex-calculator/?number1=001d&operate=1&number2=1))
+7. `char-write-req 001e 0100` (Registers for button click events; replace `001e` with the handle from step 6)
+8. Hold Nuimo's click button pressed and release it. `gatttool` should now notify all button press events.
+8. `exit` to leave `gatttool`
 
 ### 2. Install bluepy library
 
