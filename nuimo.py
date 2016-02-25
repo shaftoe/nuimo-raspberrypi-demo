@@ -37,10 +37,7 @@ class NuimoDelegate(DefaultDelegate):
         if int(cHandle) == nuimo.characteristicValueHandles['BATTERY']:
             print('BATTERY', ord(data[0]))
         elif int(cHandle) == nuimo.characteristicValueHandles['FLY']:
-            value = ord(data[0]) + ord(data[1]) << 8
-            if value >= 1 << 15:
-                value = value - 1 << 16
-            print('FLY', value)
+            print('FLY', ord(data[0]), ord(data[1]))
         elif int(cHandle) == nuimo.characteristicValueHandles['SWIPE']:
             print('SWIPE', ord(data[0]))
         elif int(cHandle) == nuimo.characteristicValueHandles['ROTATION']:
