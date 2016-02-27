@@ -35,6 +35,7 @@ From your home folder do:
 4. `python setup.py build` (Compiles files to the `build` folder)
 5. `sudo python setup.py install` (Installs bluepy Python scripts and `bluepy-helper` to `/usr/local/lib/python-2.7/dist-packages/bluepy`)
 6. `cd ..` (Navigate back to your home folder)
+7. `rm -r bluepy` (Remove bluepy source files, don't skip this step as it might otherwise lead to errornous Python imports)
 
 ### 3. Download the Nuimo Python script
 
