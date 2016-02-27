@@ -21,7 +21,12 @@ CHARACTERISTIC_UUIDS = {
     UUID('f29b1524-cb19-40f3-be5c-7241ecb82fd1') : 'LED_MATRIX'
 }
 
-NOTIFICATION_CHARACTERISTIC_UUIDS = ['BATTERY', 'BUTTON', 'ROTATION', 'SWIPE', 'FLY']
+NOTIFICATION_CHARACTERISTIC_UUIDS = [
+    #'BATTERY', # Uncomment only if you are not using the iOS emulator (iOS does't suuport battery updates without authentication)
+    'BUTTON',
+    'ROTATION',
+    'SWIPE',
+    'FLY']
 
 # Notification data
 NOTIFICATION_ON  = struct.pack("BB", 0x01, 0x00)
