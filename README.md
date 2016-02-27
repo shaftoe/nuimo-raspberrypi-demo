@@ -29,7 +29,7 @@ The [bluepy library](https://github.com/IanHarvey/bluepy) is written in Python a
 
 From your home folder do:
 
-1. `sudo apt-get install build-essential libglib2.0-dev libdbus-1-dev git` (Installs build dependencies and git)
+1. `sudo apt-get install build-essential libglib2.0-dev libdbus-1-dev python-setuptools git` (Installs build dependencies and git)
 2. `git clone https://github.com/IanHarvey/bluepy.git`
 3. `cd bluepy`
 4. `python setup.py build` (Compiles files to the `build` folder)
