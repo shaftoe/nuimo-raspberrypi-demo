@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from bluepy.btle import UUID, DefaultDelegate, Peripheral, BTLEException
 import itertools
 import struct
