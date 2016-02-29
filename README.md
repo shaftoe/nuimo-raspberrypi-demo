@@ -55,11 +55,11 @@ From your home folder do:
 # Troubleshooting
 
 - If you are having trouble to connect your Raspberry Pi to your computer or your router, [refer to the Raspberry Pi ASAP Setup Guide](http://kr15h.github.io/RPi-Setup/)
+- If `sudo hcitool lescan` prints `Set scan parameters failed: Input/output error.`, try running the following commands:
 ```
     sudo hciconfig hci0 down
     sudo hciconfig hci0 up
 ```
-- If `sudo hcitool lescan` prints `Set scan parameters failed: Input/output error.`, try running the following commands:
 
 # Support
 
