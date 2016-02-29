@@ -62,4 +62,4 @@ From your home folder do:
 
 # Support
 
-If you have questions or comments, please visit https://senic.com or shoot us an email to developers@senic.com.
+If you have questions or comments, please visit https://senic.com/developers or shoot us an email to developers@senic.com.
