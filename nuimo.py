@@ -41,26 +41,28 @@ class NuimoDelegate(DefaultDelegate):
         self.nuimo = nuimo
 
     def handleNotification(self, cHandle, data):
-        if int(cHandle) == nuimo.characteristicValueHandles['BATTERY']:
+        if int(cHandle) == self.nuimo.characteristicValueHandles['BATTERY']:
             print('BATTERY', ord(data[0]))
-        elif int(cHandle) == nuimo.characteristicValueHandles['FLY']:
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['FLY']:
             print('FLY', ord(data[0]), ord(data[1]))
-        elif int(cHandle) == nuimo.characteristicValueHandles['SWIPE']:
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['SWIPE']:
             print('SWIPE', ord(data[0]))
-        elif int(cHandle) == nuimo.characteristicValueHandles['ROTATION']:
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['ROTATION']:
             value = ord(data[0]) + (ord(data[1]) << 8)
             if value >= 1 << 15:
                 value = value - (1 << 16)
             print('ROTATION', value)
-        elif int(cHandle) == nuimo.characteristicValueHandles['BUTTON']:
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['BUTTON']:
             print('BUTTON', ord(data[0]))
 
 
 class Nuimo:
 
-    def __init__(self, macAddress='FA:48:12:00:CA:AC'):
+    def __init__(self, macAddress):
         self.macAddress = macAddress
-        self.delegate = NuimoDelegate(self)
+
+    def set_delegate(self, delegate):
+        self.delegate = delegate
 
     def connect(self):
         self.peripheral = Peripheral(self.macAddress, addrType='random')
@@ -88,6 +90,7 @@ if __name__ == "__main__":
         sys.exit()
 
     nuimo = Nuimo(sys.argv[1])
+    nuimo.set_delegate(NuimoDelegate(nuimo))
 
     # Connect to Nuimo
     print("Trying to connect to %s. Press Ctrl+C to cancel." % sys.argv[1])
