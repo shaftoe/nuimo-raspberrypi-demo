@@ -31,6 +31,44 @@ class NuimoDelegate(DefaultDelegate):
             print('BUTTON', ord(data[0]))
 
 
+class NuimoDelegate3(DefaultDelegate):
+    """ With Python v3, NuimoDelegate throws this exception:
+Trying to connect to 78:CE:80:00:50:64. Press Ctrl+C to cancel.
+Connected. Waiting for input events...
+Traceback (most recent call last):
+  File "/home/pi/nuimo.py", line 130, in <module>
+    nuimo.waitForNotifications()
+  File "/home/pi/nuimo.py", line 81, in waitForNotifications
+    self.peripheral.waitForNotifications(1.0)
+  File "/opt/hass/venv/lib/python3.4/site-packages/bluepy/btle.py", line 473, in waitForNotifications
+    resp = self._getResp('ntfy', timeout)
+  File "/opt/hass/venv/lib/python3.4/site-packages/bluepy/btle.py", line 343, in _getResp
+    self.delegate.handleNotification(hnd, data)
+  File "/home/pi/nuimo.py", line 31, in handleNotification
+    print('BUTTON', ord(data[0]))
+TypeError: ord() expected string of length 1, but int found
+
+Also, bluepy needs to be patched to be Python v3 portable:
+https://github.com/IanHarvey/bluepy/pull/112
+    """
+
+    def __init__(self, nuimo):
+        DefaultDelegate.__init__(self)
+        self.nuimo = nuimo
+
+    def handleNotification(self, cHandle, data):
+        if int(cHandle) == self.nuimo.characteristicValueHandles['BATTERY']:
+            print('BATTERY', data[0])
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['FLY']:
+            print('FLY', data[0], data[1])
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['SWIPE']:
+            print('SWIPE', data[0])
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['ROTATION']:
+            print('ROTATION not supported with Python v3')  # FIXME
+        elif int(cHandle) == self.nuimo.characteristicValueHandles['BUTTON']:
+            print('BUTTON', data[0])
+
+
 class Nuimo:
 
     SERVICE_UUIDS = [
@@ -91,7 +129,10 @@ if __name__ == "__main__":
         sys.exit()
 
     nuimo = Nuimo(sys.argv[1])
-    nuimo.set_delegate(NuimoDelegate(nuimo))
+    if sys.version_info >= (3, 0):
+        nuimo.set_delegate(NuimoDelegate3(nuimo))
+    else:
+        nuimo.set_delegate(NuimoDelegate(nuimo))
 
     # Connect to Nuimo
     print("Trying to connect to %s. Press Ctrl+C to cancel." % sys.argv[1])
@@ -132,3 +173,14 @@ if __name__ == "__main__":
         print("Connection error:", e)
     except KeyboardInterrupt:
         print("Program aborted")
+        """ FIXME: on Python 3, this exception is thrown:
+
+Connected. Waiting for input events...
+BUTTON 1
+^CProgram aborted
+Exception ignored in: <bound method Peripheral.__del__ of <bluepy.btle.Peripheral object at 0xb687d690>>
+Traceback (most recent call last):
+  File "/opt/hass/venv/lib/python3.4/site-packages/bluepy/btle.py", line 477, in __del__
+  File "/opt/hass/venv/lib/python3.4/site-packages/bluepy/btle.py", line 375, in disconnect
+  File "/opt/hass/venv/lib/python3.4/site-packages/bluepy/btle.py", line 232, in _writeCmd
+BrokenPipeError: [Errno 32] Broken pipe """
