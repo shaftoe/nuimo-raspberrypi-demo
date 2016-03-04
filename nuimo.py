@@ -8,31 +8,6 @@ import time
 if sys.version_info >= (3, 0):
     from functools import reduce
 
-SERVICE_UUIDS = {
-    UUID('0000180f-0000-1000-8000-00805f9b34fb'), # Battery
-    UUID('f29b1525-cb19-40f3-be5c-7241ecb82fd2'), # Sensors
-    UUID('f29b1523-cb19-40f3-be5c-7241ecb82fd1')  # LED Matrix 
-}
-
-CHARACTERISTIC_UUIDS = {
-    UUID('00002a19-0000-1000-8000-00805f9b34fb') : 'BATTERY',
-    UUID('f29b1529-cb19-40f3-be5c-7241ecb82fd2') : 'BUTTON',
-    UUID('f29b1528-cb19-40f3-be5c-7241ecb82fd2') : 'ROTATION',
-    UUID('f29b1527-cb19-40f3-be5c-7241ecb82fd2') : 'SWIPE',
-    UUID('f29b1526-cb19-40f3-be5c-7241ecb82fd2') : 'FLY',
-    UUID('f29b1524-cb19-40f3-be5c-7241ecb82fd1') : 'LED_MATRIX'
-}
-
-NOTIFICATION_CHARACTERISTIC_UUIDS = [
-    #'BATTERY', # Uncomment only if you are not using the iOS emulator (iOS does't suuport battery updates without authentication)
-    'BUTTON',
-    'ROTATION',
-    'SWIPE',
-    'FLY']
-
-# Notification data
-NOTIFICATION_ON  = struct.pack("BB", 0x01, 0x00)
-NOTIFICATION_OFF = struct.pack("BB", 0x00, 0x00)
 
 class NuimoDelegate(DefaultDelegate):
 
@@ -58,6 +33,32 @@ class NuimoDelegate(DefaultDelegate):
 
 class Nuimo:
 
+    SERVICE_UUIDS = [
+        UUID('0000180f-0000-1000-8000-00805f9b34fb'), # Battery
+        UUID('f29b1525-cb19-40f3-be5c-7241ecb82fd2'), # Sensors
+        UUID('f29b1523-cb19-40f3-be5c-7241ecb82fd1')  # LED Matrix
+    ]
+
+    CHARACTERISTIC_UUIDS = {
+        UUID('00002a19-0000-1000-8000-00805f9b34fb') : 'BATTERY',
+        UUID('f29b1529-cb19-40f3-be5c-7241ecb82fd2') : 'BUTTON',
+        UUID('f29b1528-cb19-40f3-be5c-7241ecb82fd2') : 'ROTATION',
+        UUID('f29b1527-cb19-40f3-be5c-7241ecb82fd2') : 'SWIPE',
+        UUID('f29b1526-cb19-40f3-be5c-7241ecb82fd2') : 'FLY',
+        UUID('f29b1524-cb19-40f3-be5c-7241ecb82fd1') : 'LED_MATRIX'
+    }
+
+    NOTIFICATION_CHARACTERISTIC_UUIDS = [
+        #'BATTERY', # Uncomment only if you are not using the iOS emulator (iOS does't support battery updates without authentication)
+        'BUTTON',
+        'ROTATION',
+        'SWIPE',
+        'FLY']
+
+    # Notification data
+    NOTIFICATION_ON  = struct.pack("BB", 0x01, 0x00)
+    NOTIFICATION_OFF = struct.pack("BB", 0x00, 0x00)
+
     def __init__(self, macAddress):
         self.macAddress = macAddress
 
@@ -67,13 +68,13 @@ class Nuimo:
     def connect(self):
         self.peripheral = Peripheral(self.macAddress, addrType='random')
         # Retrieve all characteristics from desires services and map them from their UUID
-        characteristics = list(itertools.chain(*map(lambda uuid: self.peripheral.getServiceByUUID(uuid).getCharacteristics(), SERVICE_UUIDS)))
-        characteristics = dict(map(lambda c: (c.uuid, c), characteristics))
+        characteristics = list(itertools.chain(*[self.peripheral.getServiceByUUID(uuid).getCharacteristics() for uuid in Nuimo.SERVICE_UUIDS]))
+        characteristics = dict((c.uuid, c) for c in characteristics)
         # Store each characteristic's value handle for each characteristic name
-        self.characteristicValueHandles = dict(map(lambda (uuid, name): (name, characteristics[uuid].getHandle()), CHARACTERISTIC_UUIDS.iteritems()))
+        self.characteristicValueHandles = dict((name, characteristics[uuid].getHandle()) for uuid, name in Nuimo.CHARACTERISTIC_UUIDS.items())
         # Subscribe for notifications
-        for name in NOTIFICATION_CHARACTERISTIC_UUIDS:
-            self.peripheral.writeCharacteristic(self.characteristicValueHandles[name] + 1, NOTIFICATION_ON, True)
+        for name in Nuimo.NOTIFICATION_CHARACTERISTIC_UUIDS:
+            self.peripheral.writeCharacteristic(self.characteristicValueHandles[name] + 1, Nuimo.NOTIFICATION_ON, True)
         self.peripheral.setDelegate(self.delegate)
 
     def waitForNotifications(self):
