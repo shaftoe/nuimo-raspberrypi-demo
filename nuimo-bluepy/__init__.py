@@ -31,7 +31,7 @@ class NuimoDelegate(DefaultDelegate):
             print('BUTTON', ord(data[0]))
 
 
-class Nuimo:
+class Nuimo(object):
 
     SERVICE_UUIDS = [
         UUID('0000180f-0000-1000-8000-00805f9b34fb'), # Battery

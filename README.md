@@ -30,18 +30,14 @@ The [bluepy library](https://github.com/IanHarvey/bluepy) is written in Python a
 From your home folder do:
 
 1. `sudo apt-get install build-essential libglib2.0-dev libdbus-1-dev python-setuptools git` (Installs build dependencies and git)
-2. `git clone https://github.com/IanHarvey/bluepy.git`
-3. `cd bluepy`
-4. `python setup.py build` (Compiles files to the `build` folder)
-5. `sudo python setup.py install` (Installs bluepy Python scripts and `bluepy-helper` to `/usr/local/lib/python-2.7/dist-packages/bluepy`)
-6. `cd ..` (Navigate back to your home folder)
-7. `rm -r bluepy` (Remove bluepy source files, don't skip this step as it might otherwise lead to errornous Python imports)
+2. `sudo pip install -U pip` (Upgrade Pip to latest version)
+3. `sudo pip install https://github.com/IanHarvey/bluepy/archive/master.zip#bluepy`
 
 ### 3. Download the Nuimo Python script
 
 From your home folder do:
 
-1. `wget https://raw.githubusercontent.com/getsenic/nuimo-raspberrypi-demo/master/nuimo.py` (Downloads `nuimo.py`)
+1. `wget https://raw.githubusercontent.com/getsenic/nuimo-raspberrypi-demo/master/nuimo-bluepy/__init__.py -O nuimo.py` (Downloads `nuimo.py`)
 2. `nano nuimo.py` (If you want to modify the Nuimo demo script, Ctrl+X to quit `nano`)
 
 ## Run the Nuimo Python script
